@@ -467,6 +467,8 @@
   .modal{max-width:600px;width:100%;background:#1c1813;color:#d8cfc0;border:1px solid #473a2a;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.6);max-height:92vh;overflow:auto;font-family:"IBM Plex Mono",monospace}
   .modal .mh{background:#211c16;border-bottom:1px solid #473a2a;padding:14px 18px;border-left:5px solid #c9a227;border-radius:10px 10px 0 0}
   .modal .mh h2{font-family:"Oswald";letter-spacing:.08em;text-transform:uppercase}
+  .modal-x{background:#33302b;border:1px solid #4a463f;color:#e6e2da;width:34px;height:34px;min-width:34px;border-radius:7px;cursor:pointer;font-size:18px;line-height:1;flex:0 0 auto}
+  .modal-x:hover{background:#45413a}
   .modal .mb{padding:16px 18px;font-size:13px}.modal .mb p{margin:0 0 11px;color:#8a8175}.modal .mb b{color:#e8c14a}
   .modal ol,.modal ul{margin:0 0 12px;padding-left:18px}.modal li{margin-bottom:7px;color:#8a8175}.modal li b{color:#d8cfc0}
   .modal .mf{padding:0 18px 18px;display:flex;justify-content:flex-end;gap:10px}
@@ -1813,7 +1815,7 @@ function coachTip(){
 
 /* ---------------- modals ---------------- */
 function showManual(){
-  document.getElementById('modalRoot').innerHTML='<div class="scrim" data-close-scrim><div class="modal" role="dialog" aria-label="Field manual"><div class="mh"><h2>Field manual</h2></div><div class="mb">'+
+  document.getElementById('modalRoot').innerHTML='<div class="scrim" data-close-scrim><div class="modal" role="dialog" aria-label="Field manual"><div class="mh" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Field manual</h2><button class="modal-x" data-close aria-label="Close">✕</button></div><div class="mb">'+
     '<p>You run a gray-market defense brokerage from a desktop. You buy <b>materiel</b> cheap and deliver it into faction contracts for more than you paid. Every deal arms a side and shifts the political map — climb the faction ladder from street cops to world powers, and the campaign ends when you <b>broker an aircraft carrier</b>. Don\'t let heat or debt bury you first.</p>'+
     '<p style="color:#e8c14a;font-family:Oswald;letter-spacing:.08em;text-transform:uppercase;font-size:13px;margin:14px 0 8px">Money, in plain words</p><ul>'+
     '<li><b>Market value</b> = what gear is worth at normal price. Every contract shows the market value of what it needs.</li>'+
@@ -1841,11 +1843,12 @@ function showEnd(){const w=S.over.win;
     '<div class="line"><span class="l">Operating days</span><span class="r">'+S.day+'</span></div>'+
     '<div class="line"><span class="l">Final valuation</span><span class="r big">'+money(netWorth())+'</span></div>'+
     '<div class="line"><span class="l">Reputation</span><span class="r">'+Math.round(S.rep)+'</span></div>'+
-    '<div class="line"><span class="l">Followers</span><span class="r">'+qty(S.followers)+'</span></div></div><div class="mf"><button class="btn" data-restart>New brokerage</button></div></div></div>';}
+    '<div class="line"><span class="l">Followers</span><span class="r">'+qty(S.followers)+'</span></div></div><div class="mf"><button class="btn ghost" data-restart>New brokerage</button><button class="btn" data-close>Start playing ▸</button></div></div></div>';}
 
 /* ---------------- events ---------------- */
 document.addEventListener('click',e=>{
   if(e.target&&e.target.id==='winlayer'){S.app=null;render();return;}
+  if(e.target&&e.target.classList&&e.target.classList.contains('scrim')){document.getElementById('modalRoot').innerHTML='';return;}
   const t=e.target.closest('button'); if(!t)return;
   const d=t.dataset;
   if(d.app!==undefined){S.app=d.app;render();return;}
@@ -1905,13 +1908,13 @@ function exportSave(){try{const blob=new Blob([JSON.stringify({v:1,t:Date.now(),
 function importSaveFile(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(applySave(d.S||d)){autosave();document.getElementById('modalRoot').innerHTML='';render();notify('Save imported · Day '+S.day,'clout');}else flash('That file is not a valid save.');}catch(e){flash('That file is not a valid save.');}};r.onerror=()=>flash('Could not read that file.');r.readAsText(file);}
 function newGame(){if(!window.confirm('Start a new brokerage? This erases your saved game.'))return;wipeSave();location.reload();}
 function showSaveMenu(){const saved=hasSave();
-  document.getElementById('modalRoot').innerHTML='<div class="scrim" data-close-scrim><div class="modal" role="dialog" aria-label="Save and load"><div class="mh"><h2>Save &amp; Load</h2></div><div class="mb">'+
+  document.getElementById('modalRoot').innerHTML='<div class="scrim" data-close-scrim><div class="modal" role="dialog" aria-label="Save and load"><div class="mh" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Save &amp; Load</h2><button class="modal-x" data-close aria-label="Close">✕</button></div><div class="mb">'+
     '<p>BRASS auto-saves to this browser after every move.'+(_storageOK?' Your last session reloads automatically when you reopen the file.':' <b style="color:var(--down)">This browser is blocking storage</b> — use Export to keep a save file.')+'</p>'+
     '<div class="save-row"><button class="btn" data-savenow>Save now</button><button class="btn ghost" data-loadsave '+(saved?'':'disabled')+'>Load last save</button></div>'+
     '<p style="color:#e8c14a;font-family:Oswald;letter-spacing:.08em;text-transform:uppercase;font-size:12px;margin:16px 0 6px">Backup / transfer</p>'+
     '<div class="save-row"><button class="btn ghost" data-exportsave>⬇ Export to file</button><label class="btn ghost imp-lbl">⬆ Import file<input type="file" id="importInput" accept=".json,application/json"></label></div>'+
     '<p class="hint">Export downloads a save file to back up or move to another device. Import loads one back in.</p>'+
-    '<div class="mf"><button class="btn danger" data-newgame>New game (wipe save)</button></div></div></div></div>';
+    '<div class="mf"><button class="btn danger" data-newgame>New game (wipe save)</button><button class="btn" data-close>Done</button></div></div></div></div>';
   const inp=document.getElementById('importInput');if(inp)inp.addEventListener('change',e=>{if(e.target.files&&e.target.files[0])importSaveFile(e.target.files[0]);});}
 const _loaded=loadGame();
 if(!_loaded){
