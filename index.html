@@ -132,9 +132,10 @@
   .frow{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px}
   .frow-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .fbloc{width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-  .fbloc.axis{background:rgba(202,162,39,.18);color:#e8c14a}
-  .fbloc.pact{background:rgba(125,94,160,.2);color:#b29ccc}
-  .fbloc.swing{background:rgba(47,125,158,.18);color:#79b6d2}
+  .fbloc.pmc{background:rgba(194,71,61,.2);color:#e08577}
+  .fbloc.gov{background:rgba(91,143,199,.2);color:#8fb6e0}
+  .tug .side.pmc{color:#e08577}.tug .side.gov{color:#8fb6e0}
+  .tugbar i.pmc{background:#b5473d}.tugbar i.gov{background:#5b8fc7}
   .fname{font-family:"Oswald";font-weight:600;letter-spacing:.02em;font-size:14px;color:var(--bone);flex:1;text-transform:uppercase}
   .stpill{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
   .st-patron{background:rgba(202,162,39,.2);color:#e8c14a;border:1px solid #caa86a}
@@ -381,6 +382,32 @@
   .post.ambient{background:var(--panel-2);border-style:dashed}
   .post.ambient .ph-h{color:var(--bone)}
   .ph-foll{font-size:9px;color:var(--faint);border:1px solid var(--line);border-radius:10px;padding:2px 8px;align-self:flex-start;text-transform:uppercase;letter-spacing:.04em}
+  .dm-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .dm-row{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;background:var(--panel);padding:11px 13px;color:var(--bone)}
+  .dm-row:hover{background:var(--panel-2)}
+  .dm-row.unread{background:rgba(43,111,224,.07)}
+  .dm-av{width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#11100e;flex-shrink:0}
+  .dm-main{flex:1;min-width:0}
+  .dm-top{display:flex;align-items:center;gap:8px}
+  .dm-name{font-weight:700;font-size:13px;color:var(--bone)}
+  .dm-snip{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .dm-tag{font-size:9px;text-transform:uppercase;letter-spacing:.05em;padding:1px 7px;border-radius:9px;font-weight:600}
+  .dm-tag.req{background:rgba(201,162,39,.2);color:#e8c14a}
+  .dm-tag.fill{background:rgba(31,141,87,.22);color:#5cc98f}
+  .dm-tag.done{background:var(--panel-2);color:var(--faint)}
+  .dm-tag.fluff{background:rgba(125,94,160,.18);color:#b29ccc}
+  .dm-dot{width:9px;height:9px;border-radius:50%;background:#2b6fe0;flex-shrink:0}
+  .dm-head{display:flex;align-items:center;gap:11px;padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .dm-sub{font-size:11px;color:var(--muted);margin-top:1px}
+  .dm-thread{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+  .bub{max-width:80%;padding:9px 12px;border-radius:13px;font-size:12.5px;line-height:1.4}
+  .bub.them{align-self:flex-start;background:var(--panel-2);color:var(--bone);border-bottom-left-radius:4px}
+  .bub.me{align-self:flex-end;background:#2b6fe0;color:#fff;border-bottom-right-radius:4px}
+  .dm-action{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px}
+  .dm-q-lab{font-size:11px;color:var(--muted);margin-bottom:8px}
+  .dm-quotes{display:flex;flex-direction:column;gap:6px}
+  .dm-quotes .dm-quote{width:100%;text-align:center}
+  .dm-fill{width:100%}
   .post.milestone{border-color:#1f6fe0;background:linear-gradient(180deg,rgba(31,111,224,.06),transparent)}
   .post-head{display:flex;align-items:center;gap:10px;margin-bottom:9px}
   .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Inter";font-weight:700;font-size:12px;color:#fff;flex:0 0 auto}
@@ -668,8 +695,8 @@ const EVENTS=[
   {t:'Quiet week on the wire.',sku:null,mult:1,note:'markets flat'},
 ];
 /* ---------------- factions & the war ---------------- */
-const BLOCS={axis:{label:'Halgar–Verdic Axis',icon:'🜲',cls:'axis'},pact:{label:'Tannhauser Pact',icon:'🜨',cls:'pact'},swing:{label:'Unaligned',icon:'◈',cls:'swing'}};
-const FTIERS={1:'Streets',2:'Private Power',3:'State Actors',4:'Militaries',5:'Powers & Blocs'};
+const BLOCS={pmc:{label:'Vantor Group',icon:'⚙',cls:'pmc'},gov:{label:'Federal Government',icon:'★',cls:'gov'}};
+const FTIERS={1:'Streets',2:'Organized',3:'Regional',4:'Military',5:'Strategic'};
 /* what each tier brings online */
 const MATERIEL=[
   {tier:1,label:'Small arms',items:'rifles · pistols · ammo · armor · optics',skus:[]},
@@ -679,37 +706,31 @@ const MATERIEL=[
   {tier:5,label:'Naval & strategic',items:'frigates · destroyers · subs · the carrier',skus:['n_frigate','n_destroyer','n_sub','n_carrier']},
 ];
 const FACTIONS=[
-  // Tier 1 · Streets
-  {id:'halgar_pd',name:'Halgar Metro PD',tier:1,bloc:'axis',econ:'indie',rivals:['two_rivers'],theater:'Halgar wards'},
-  {id:'two_rivers',name:'Two Rivers Militia',tier:1,bloc:'pact',econ:'personal',rivals:['halgar_pd'],theater:'Halgar wards'},
-  {id:'caspian_sheriff',name:'Caspian Sheriff’s Office',tier:1,bloc:'swing',econ:'indie',rivals:['dockworkers'],theater:'Caspian coast'},
-  {id:'dockworkers',name:'Dockworkers Co-op',tier:1,bloc:'pact',econ:'personal',rivals:['caspian_sheriff'],theater:'Caspian coast'},
-  // Tier 2 · Private power
-  {id:'drustan_pmc',name:'Drustan PMC',tier:2,bloc:'axis',econ:'government',rivals:['vorland'],theater:'contract zones'},
-  {id:'vorland',name:'Vorland Security Group',tier:2,bloc:'pact',econ:'government',rivals:['drustan_pmc'],theater:'contract zones'},
-  {id:'greywater',name:'Greywater Cartel',tier:2,bloc:'pact',econ:'government',rivals:['sable_syn'],theater:'Sable corridor'},
-  {id:'sable_syn',name:'Sable Port Syndicate',tier:2,bloc:'axis',econ:'government',rivals:['greywater'],theater:'Sable corridor'},
-  // Tier 3 · State actors
-  {id:'free_verdic',name:'Free Verdic',tier:3,bloc:'axis',econ:'whale',rivals:['kresnik'],theater:'Verdic front'},
-  {id:'kresnik',name:'Kresnik State',tier:3,bloc:'pact',econ:'whale',rivals:['free_verdic'],theater:'Verdic front'},
-  {id:'northwind',name:'Northwind Confederation',tier:3,bloc:'swing',econ:'whale',rivals:[],theater:'northern reach'},
-  // Tier 4 · Militaries
-  {id:'tannhauser_army',name:'Tannhauser Army Command',tier:4,bloc:'pact',econ:'whale',rivals:['caspian_ng'],theater:'eastern theatre'},
-  {id:'caspian_ng',name:'Caspian National Guard',tier:4,bloc:'axis',econ:'whale',rivals:['tannhauser_army'],theater:'eastern theatre'},
-  {id:'drovic',name:'Drovic Republic',tier:4,bloc:'swing',econ:'whale',rivals:[],theater:'Drovic basin'},
-  // Tier 5 · Powers & blocs
-  {id:'halgar_mod',name:'Halgar Ministry of Defense',tier:5,bloc:'axis',econ:'whale',rivals:['tannhauser_pact'],theater:'grand strategy'},
-  {id:'tannhauser_pact',name:'Tannhauser Pact Command',tier:5,bloc:'pact',econ:'whale',rivals:['halgar_mod'],theater:'grand strategy'},
-  {id:'sabre_maritime',name:'Sabre Maritime',tier:5,bloc:'swing',econ:'whale',rivals:[],theater:'blue water'},
+  // Tier 1 · Streets — the war's lowest rung
+  {id:'militia',     name:'Street Militia',   tier:1,bloc:'pmc',rivals:['city_police'],     theater:'the inner wards'},
+  {id:'city_police', name:'City Police',      tier:1,bloc:'gov',rivals:['militia'],         theater:'the inner wards'},
+  // Tier 2 · Organized
+  {id:'cartel',      name:'Sablecoast Cartel',tier:2,bloc:'pmc',rivals:['state_troopers'],  theater:'the smuggling corridor'},
+  {id:'state_troopers',name:'State Troopers', tier:2,bloc:'gov',rivals:['cartel'],          theater:'the smuggling corridor'},
+  // Tier 3 · Regional
+  {id:'insurgents',  name:'Insurgent Front',  tier:3,bloc:'pmc',rivals:['national_guard'],  theater:'the contested belt'},
+  {id:'national_guard',name:'National Guard', tier:3,bloc:'gov',rivals:['insurgents'],      theater:'the contested belt'},
+  // Tier 4 · Military
+  {id:'pmc_legion',  name:'Vantor Legion',    tier:4,bloc:'pmc',rivals:['federal_army'],    theater:'the eastern front'},
+  {id:'federal_army',name:'Federal Army',     tier:4,bloc:'gov',rivals:['pmc_legion'],      theater:'the eastern front'},
+  // Tier 5 · Strategic — the two principals themselves
+  {id:'vantor_group',name:'Vantor Group',     tier:5,bloc:'pmc',rivals:['federal_command'], theater:'the whole theater'},
+  {id:'federal_command',name:'Federal Command',tier:5,bloc:'gov',rivals:['vantor_group'],   theater:'the whole theater'},
 ];
 const FMAP={}; FACTIONS.forEach(f=>FMAP[f.id]=f);
 const STANDING_BANDS=[[85,'Patron','st-patron'],[60,'Trusted','st-trusted'],[40,'Known','st-known'],[20,'Cold','st-cold'],[8,'Blacklisted','st-black'],[0,'Hostile','st-hostile']];
 function standingBand(v){for(const b of STANDING_BANDS)if(v>=b[0])return b;return STANDING_BANDS[STANDING_BANDS.length-1];}
-const TIER_CFG={
-  personal:  {label:'INDIVIDUAL',band:[150,4500],     lines:[1,1], margin:[1.25,1.7],  comp:[0.04,0.28], deadline:[3,7],  pool:INDIV,   rules:['ANY','ANY','ANY','NO_EMBARGO'], pillCls:'crumb', desc:'one person, one specific want', exact:0.62, brand:0},
-  indie:     {label:'SMALL GROUP',band:[3000,38000],  lines:[1,2], margin:[1.22,1.6],  comp:[0.1,0.45],  deadline:[4,8],  pool:GROUP,   rules:['ANY','ANY','NO_EMBARGO','NO_EMBARGO','NATO_ONLY'], pillCls:'gray', desc:'militias & gun stores', exact:0.16, brand:0.4},
-  government:{label:'POLICE',    band:[45000,420000], lines:[1,3], margin:[1.16,1.45], comp:[0.32,0.7],  deadline:[5,10], pool:POLICE,  rules:['NO_EMBARGO','NO_EMBARGO','NATO_ONLY','NATO_ONLY','ANY'], pillCls:'nato', desc:'standardized duty kit', exact:0.05, brand:0.55},
-  whale:     {label:'ARSENAL',   band:[420000,1900000],lines:[2,3],margin:[1.14,1.36], comp:[0.5,0.85],  deadline:[7,13], pool:ARSENAL, rules:['NATO_ONLY','NATO_ONLY','NO_EMBARGO'], pillCls:'whale', desc:'nations & PMCs, mass orders', exact:0, brand:0.22},
+const TIER_ECON={
+  1:{label:'STREETS',   band:[1000,12000],      lines:[1,2], margin:[1.25,1.7],  comp:[0.04,0.30], deadline:[3,7],  rules:['ANY','ANY','ANY','NO_EMBARGO'],                    pillCls:'crumb', exact:0.40, brand:0.12},
+  2:{label:'ORGANIZED', band:[12000,95000],     lines:[1,2], margin:[1.22,1.60], comp:[0.12,0.45], deadline:[4,8],  rules:['ANY','NO_EMBARGO','NO_EMBARGO','NATO_ONLY'],        pillCls:'gray',  exact:0.18, brand:0.40},
+  3:{label:'REGIONAL',  band:[95000,550000],    lines:[1,3], margin:[1.16,1.45], comp:[0.30,0.65], deadline:[5,10], rules:['NO_EMBARGO','NO_EMBARGO','NATO_ONLY','NATO_ONLY'],  pillCls:'nato',  exact:0.06, brand:0.50},
+  4:{label:'MILITARY',  band:[550000,3000000],  lines:[1,2], margin:[1.14,1.40], comp:[0.45,0.80], deadline:[7,12], rules:['NATO_ONLY','NATO_ONLY','NO_EMBARGO'],               pillCls:'whale', exact:0,    brand:0.35},
+  5:{label:'STRATEGIC', band:[3000000,15000000],lines:[1,2], margin:[1.12,1.36], comp:[0.55,0.88], deadline:[9,15], rules:['NATO_ONLY','NATO_ONLY'],                            pillCls:'whale', exact:0,    brand:0.20},
 };
 const PERSONAL_SKUS=['a556','a762s','a9','a12','mst','mak','mp','mag_pouch','ifak','f_pistol','f_shotgun','f_ak','f_carbine','ar_soft','ar_carrier','hl_helmet','o_reddot','o_lpvo','o_irlaser','o_nvm'];
 const INDIE_SKUS=SKU_KEYS.filter(k=>k!=='f_ams');
@@ -721,7 +742,7 @@ const S={day:1,cash:12000,debt:0,rep:50,heat:0,followers:0,target:1000000,
   bzFilter:'all',bzItem:null,solFilter:'all',solSort:'new',
   vaultPrice:100,vaultShares:0,vaultBasis:0,vaultHist:[100],netHist:[],
   campaign:null,draft:{prizeIds:[],entryPrice:25,adSpend:5000,merch:'none'},merchLifetime:0,raisedLifetime:0,
-  maxTier:1,factions:{},postsToday:0,carrierBrokered:false,dev:false,pnl:[],upgrades:{}};
+  maxTier:1,factions:{},postsToday:0,carrierBrokered:false,winAck:false,dev:false,pnl:[],upgrades:{},dms:[],dmRel:{},dmOpen:null};
 FACTIONS.forEach(f=>S.factions[f.id]={standing:f.tier===1?32:14,power:60,alive:true});
 SKU_KEYS.forEach(k=>S.market[k]=1);
 
@@ -939,9 +960,8 @@ function factionPick(f){
   return pick(factionSkuPool(f));}
 function genContract(forceFaction){
   const f=forceFaction&&FMAP[forceFaction]?FMAP[forceFaction]:pickContractFaction();
-  const tier=f.econ;const cfg=TIER_CFG[tier];
-  const tmul=({4:4,5:12})[f.tier]||1;
-  const T=R(cfg.band[0],cfg.band[1])*tmul;
+  const cfg=TIER_ECON[f.tier];
+  const T=R(cfg.band[0],cfg.band[1]);
   const fpool=factionSkuPool(f);
   // high-tier clients buy big-ticket single items; lower tiers bundle kits
   let nLines=f.tier>=4?1:RI(cfg.lines[0],cfg.lines[1]);
@@ -966,7 +986,7 @@ function genContract(forceFaction){
   const deadline=S.day+RI(cfg.deadline[0],cfg.deadline[1]);
   const rivalNames=f.rivals.filter(r=>fst(r).alive).map(r=>FMAP[r].name);
   const advance=f.tier>=4?Math.round(ceiling*0.45):0;
-  return {id:uid(),buyer:f.name,faction:f.id,bloc:f.bloc,rivalNames,ftier:f.tier,lines,ceiling,advance,rule:pick(cfg.rules),comp:R(cfg.comp[0],cfg.comp[1]),deadline,tier,tierLabel:cfg.label,pillCls:cfg.pillCls,demand,hasExp:lines.some(l=>SKUS[l.sku].exp)};}
+  return {id:uid(),buyer:f.name,faction:f.id,bloc:f.bloc,rivalNames,ftier:f.tier,lines,ceiling,advance,rule:pick(cfg.rules),comp:R(cfg.comp[0],cfg.comp[1]),deadline,tier:f.tier,tierLabel:cfg.label,pillCls:cfg.pillCls,demand,hasExp:lines.some(l=>SKUS[l.sku].exp)};}
 function refreshContracts(){
   S.contracts=S.contracts.filter(c=>c.deadline>S.day&&(c.capstone||chance(0.55)));
   while(S.contracts.length<RI(4,6)) S.contracts.push(genContract());}
@@ -976,7 +996,7 @@ function genCapstone(){
   const f=pick(cands);
   const lines=[{sku:'n_carrier',need:1}];
   const ceiling=Math.round(lineValue(lines[0])*R(1.18,1.32));
-  return {id:uid(),buyer:f.name,faction:f.id,bloc:f.bloc,rivalNames:[],ftier:5,lines,ceiling,advance:Math.round(ceiling*0.5),rule:'NATO_ONLY',comp:R(0.18,0.4),deadline:S.day+RI(10,16),tier:'whale',tierLabel:'★ CAPSTONE',pillCls:'whale',demand:null,capstone:true,hasExp:true};}
+  return {id:uid(),buyer:f.name,faction:f.id,bloc:f.bloc,rivalNames:[],ftier:5,lines,ceiling,advance:Math.round(ceiling*0.5),rule:'NATO_ONLY',comp:R(0.18,0.4),deadline:S.day+RI(10,16),tier:5,tierLabel:'★ CAPSTONE',pillCls:'whale',demand:null,capstone:true,hasExp:true};}
 function maybeSpawnCapstone(){
   if(S.maxTier<5||S.carrierBrokered)return;
   if(S.contracts.some(c=>c.capstone)||S.jobs.some(j=>j.lines.some(l=>l.sku==='n_carrier')))return;
@@ -1090,6 +1110,16 @@ function relabelBrand(lid,targetP){
   log('RE-STAMPED · '+qty(l.qty)+' '+fromName+' → '+prodName(l.sku,targetP)+' · '+money(cost)+' · +'+heatAdd+' heat','warn');
   pnl('relabel',prodName(l.sku,targetP),valGain,'re-stamp cost '+money(cost));
   notify('Re-stamped → '+prodName(l.sku,targetP)+' (+'+heatAdd+' heat)','info'); render();}
+function fixerCut(){return Math.min(20,Math.round(S.heat));}
+function fixerCost(){return Math.round(Math.max(8,fixerCut())*(300+(S.maxTier||1)*150));}
+function payFixer(){
+  if(S.heat<4){flash('Heat is already low — save your cash.');return;}
+  const cut=fixerCut(),cost=fixerCost();
+  if(cost>S.cash){flash('A fixer wants '+money(cost)+' to make this quiet — you\'re short.');return;}
+  S.cash-=cost; S.heat=clamp(S.heat-cut,0,100);
+  pnl('special','Fixer · laid low',-cost,'cleared '+cut+' heat');
+  log('FIXER · paid '+money(cost)+' to bury '+cut+' heat','clout');
+  notify('Laid low · −'+cut+' heat','clout'); render();}
 function sellLot(lid){
   const l=S.inv.find(x=>x.id===lid); if(!l)return;
   const take=Math.round(l.qty*price(l.sku)*0.7); S.cash+=take;
@@ -1165,7 +1195,7 @@ function shipJob(jid){
   if(chance(0.10)){log('CUSTOMS HOLD · '+job.buyer+' shipment cleared after delay','warn');}
   const profit=Math.round(job.price-cogs);
   const payout=job.price-(job.advance||0);
-  S.cash+=payout; S.rep=clamp(S.rep+({whale:6,government:4,indie:3,personal:2}[job.tier]||3),0,100); S.heat=clamp(S.heat-2,0,100);
+  S.cash+=payout; S.rep=clamp(S.rep+({1:2,2:3,3:4,4:5,5:6}[job.ftier||job.tier]||3),0,100); S.heat=clamp(S.heat-2,0,100);
   S.jobs=S.jobs.filter(x=>x.id!==jid);
   log('DELIVERED · '+job.buyer+' · '+contractTitle(job)+' · revenue '+money(job.price)+' · profit '+money(profit),profit>=0?'good':'bad');
   pnl('deliver',job.buyer,profit,contractTitle(job)+' · revenue '+money(job.price));
@@ -1350,7 +1380,8 @@ function endDay(){
   warDrift();
   if(S.campaign)campaignStep();
   const na=RI(1,2);for(let i=0;i<na;i++)ambientPost();
-  S.heat=clamp(S.heat-1-heatDecayBonus(),0,100);
+  if(chance(clamp(0.18+S.followers/40000,0.18,0.6)))spawnDM();
+  S.heat=clamp(S.heat-(1+Math.floor(S.heat/22)+heatDecayBonus()),0,100);
   if(S.followers>2500&&chance(Math.min(0.5,S.followers/45000))){S.contracts.push(genContract());log('A contact off Friendly Face tips you to a fresh solicitation.','clout');}
   refreshContracts();
   maybeSpawnCapstone();
@@ -1362,7 +1393,7 @@ function checkEnd(){
   if(S.heat>=100)S.over={win:false,reason:'Your license was pulled. An audit froze the accounts and the file went to a prosecutor. The brokerage is finished.'};
   else if(S.rep<=0)S.over={win:false,reason:'No buyer will take your call. Reputation is gone and the feed has blacklisted your access.'};
   else if(S.cash<0&&(S.cash+invValue()+vaultValue())<0&&creditLimit()-S.debt<=0)S.over={win:false,reason:'Insolvent. You owe more than you can cover and there is nothing left to liquidate.'};
-  else if(S.carrierBrokered)S.over={win:true,reason:'You brokered an aircraft carrier — the largest arms deal of your life. Take the commission, dissolve the brokerage, and disappear somewhere warm before anyone reads the manifest.'};}
+  else if(S.carrierBrokered&&!S.winAck)S.over={win:true,reason:'You brokered an aircraft carrier — the largest arms deal of your life. Take the commission, dissolve the brokerage, and disappear somewhere warm before anyone reads the manifest.'};}
 
 /* ---------------- toasts / flash ---------------- */
 function notify(text,kind){
@@ -1397,15 +1428,170 @@ function lineChart(values,o){o=o||{};const w=o.w||520,h=o.h||120,pad=6;
   return '<svg class="chart" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" height="'+h+'"><path d="'+area+'" fill="'+col+'" opacity="0.13"/><polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round"/></svg>';}
 
 /* ---------------- apps ---------------- */
+/* ---------------- DMs: persona-driven retail sales ---------------- */
+const DM_PERSONAS=[
+  {id:'firsttimer',handle:'@kacey_quietcreek',name:'Kacey',skus:['f_pistol','f_shotgun'],qty:[1,1],demand:'class',ease:-0.06,
+   greet:["hi um… a friend said you're discreet? i've never bought one before — just want something simple for home, nothing scary 😅","ok i finally decided. something small i can actually handle. you helped my coworker?"],
+   haggle:["oh… that's more than i budgeted 😕 can you do any better?","that feels like a lot for a first one…"],
+   accept:["okay! that feels fair, thank you for not being weird about it 🙏","deal — you're way nicer than the gun-store guys."],
+   decline:["i think i need to save up a bit more. thank you though ❤️"],
+   delivered:["got it! way less scary than i imagined. thank you for being patient with me 🙂","perfect. i feel safer already — i'll be back once i actually learn to shoot!"],
+   ret:["hey it's Kacey!! i did a range day and LOVED it. ready for something a little nicer now 😄","me again 🙂 getting more serious about this — what would you step me up to?"]},
+  {id:'noname',handle:'@gray_courier',name:'— —',skus:['f_pistol','f_smg','o_irlaser'],qty:[1,1],demand:'exact',ease:0.16,
+   greet:["One item. Quiet. No paperwork, no chatter. You were referred.","Same arrangement. One piece. You know the spec."],
+   haggle:["The price isn't the issue — the discretion is. Lower it and we proceed."],
+   accept:["Acceptable. Proceed.","Fine. You understand the terms."],
+   decline:["Then we never spoke."],
+   delivered:["Received. You were never contacted.","Clean. Delete this thread."],
+   ret:["I have need again. Same as before. Quiet."]},
+  {id:'rangebro',handle:'@gainz_and_grains',name:'Tyler',skus:['f_carbine','f_ak','a556','a762s','o_reddot','o_lpvo','mst'],qty:[1,3],demand:'brand',ease:0.04,
+   greet:["yo brother 🤝 need to feed the AR. what can you do on a carbine + glass?","sup man, building out a new rifle. want something name-brand, not gas-station tier"],
+   haggle:["c'mon man hook a brother up, that's steep 😂"],
+   accept:["LETS GO 🔥 sending it","bet. you're my guy now"],
+   decline:["nah i'll shop around, no hard feelings 🤙"],
+   delivered:["BROTHER this is clean 🔥 range day's gonna be elite. putting your @ in the group chat","money. you'll hear from me again fr"],
+   ret:["ayo it's Tyler 🤙 the boys want in now. need more of the good stuff"]},
+  {id:'prepper',handle:'@two_is_one_one_is_none',name:'Hal',skus:['a556','a762s','a9','ar_plate','ifak','mst','f_ak'],qty:[2,6],demand:'class',ease:0.02,
+   greet:["Stocking deep before things get spicy. Need volume — ammo and plates. You move bulk?","The grid's not getting more stable. Topping off the cache. What've you got?"],
+   haggle:["I buy in bulk, friend — that should buy me a better number."],
+   accept:["Good man. Stacking it.","Done. Peace of mind isn't cheap."],
+   decline:["I'll wait for a better window. Prices always dip."],
+   delivered:["Squared away. Sleeping better tonight — back before the next 'event'.","Solid. You're on my short list when it matters."],
+   ret:["Hal again. Restocking — the situation's developing, if you follow."]},
+  {id:'collector',handle:'@blued_steel_only',name:'Edmund',skus:['f_sniper','f_dmr','f_pistol','o_nvg'],qty:[1,1],demand:'exact',ease:0.2,
+   greet:["I collect the finer pieces. Something specific has caught my eye — and yes, I pay for exactly what I ask for.","A particular model tempts me. I don't substitute. Can you source precisely?"],
+   haggle:["Quality has a price; I only ask it be the right one."],
+   accept:["Splendid. A discerning dealer is a rare thing.","Very good. Add me to your ledger of regulars."],
+   decline:["Not quite. I'd sooner wait than settle."],
+   delivered:["Exquisite — exactly as specified. A pleasure 🥂","Precisely right. You'll hear from me when the next piece tempts me."],
+   ret:["Edmund again. Another piece has caught my eye — same standards, naturally."]},
+  {id:'flipper',handle:'@buylow_sellhigh_actual',name:'Deon',skus:['f_pistol','f_carbine','a9','a556','o_reddot'],qty:[2,5],demand:'class',ease:-0.02,
+   greet:["talk to me. i flip at shows, need stock cheap enough to mark up. what's your floor?","numbers guy here. i move units — give me a deal i can resell and we both eat 🤝"],
+   haggle:["that kills my margin man, work with me"],
+   accept:["that'll move. pleasure 🤝","good number, i'll clear it by sunday"],
+   decline:["no margin in it for me at that. next time"],
+   delivered:["already got a buyer lined up 😎 see you at the next drop","clean flip. you're my supplier now"],
+   ret:["Deon again 🤝 last batch sold out — refill me"]},
+  {id:'offduty',handle:'@badge_after_five',name:'Reyes',skus:['f_pistol','ar_plate','hl_helmet','o_irlaser','a9'],qty:[1,2],demand:'brand',ease:0.08,
+   greet:["Off the record — need a personal piece, department-grade, no requisition forms. Discreet?","Looking for duty-quality kit for personal carry. Brand matters. Keep it quiet."],
+   haggle:["I know what this costs wholesale. Sharpen the pencil."],
+   accept:["Appreciated. Stays between us.","Good. You never met me."],
+   decline:["I'll source it through other channels. We're good."],
+   delivered:["Solid kit. You're a friend to the badge — quietly.","Squared away. I'll point the right people your way."],
+   ret:["Reyes again. Rounding out the kit — same discretion."]},
+];
+const DM_PMAP={};DM_PERSONAS.forEach(p=>DM_PMAP[p.id]=p);
+const DM_FLUFF=[
+  {handle:'@xX_doorkicker_Xx',lines:["yo your page is FIRE 🔥 you really move that much brass??","drop the discord bro i wanna lurk"]},
+  {handle:'@lonely_at_the_range',lines:["hey 👀 you single? asking for myself","you ever do range dates? 🙂 no pressure haha (pressure)"]},
+  {handle:'@definitely_not_a_fed',lines:["hello fellow civilian! quick q: cheapest way to acquire a fully autom— nevermind","🤓 totally normal question, please disregard, carry on patriot"]},
+  {handle:'@optic_giveaway_official',lines:["CONGRATULATIONS 🎉 you've WON a free thermal scope! just send $40 shipping to claim"]},
+  {handle:'@keyboard_kommando',lines:["ackshually a 9mm won't stop a determined attacker 🤓 you should sell 10mm","source? i made it up. anyway nice page"]},
+  {handle:'@mall_ninja_supreme',lines:["do you sell katanas too or just guns 🗡️","what about throwing stars. for legal reasons it's for a movie"]},
+  {handle:'@anon_whisper',lines:["i know what you did last drop 👁️","jk. or am i. anyway cool page lol"]},
+];
+function dmUnread(){return S.dms.filter(t=>t.unread).length;}
+function dmQty(sku,base){const c=SKUS[sku].cat;if(c==='ammo')return RI(300,1500);if(c==='mag')return RI(6,24);if(c==='gear')return RI(2,8);if(c==='armor')return RI(1,4);return base;}
+function makeDmOrder(p){
+  const avail=p.skus.filter(skuUnlocked); const sku=pick(avail.length?avail:p.skus);
+  const qn=dmQty(sku,RI(p.qty[0],p.qty[1])); const arr=PRODUCTS[sku]||[]; let demand=p.demand,pi=null,brand=null;
+  if((demand==='exact'||demand==='brand')&&arr.length){pi=RI(0,arr.length-1);brand=arr[pi].b;} else demand='class';
+  const mkt=Math.round((pi!=null?prodVal(sku,pi):price(sku))*qn);
+  return {sku,qty:qn,demand,p:pi,brand,mkt,agreed:0};}
+function dmRequestLine(o){const s=SKUS[o.sku];
+  if(o.demand==='exact')return 'Specifically '+qty(o.qty)+'× '+prodName(o.sku,o.p)+' — a '+s.label+', that exact brand.';
+  if(o.demand==='brand')return 'After '+qty(o.qty)+'× '+s.label+' — '+o.brand+' if you have it, but I\'m flexible on brand.';
+  return 'Need '+qty(o.qty)+'× '+s.label+'. Whatever brand\'s solid — not picky.';}
+function dmQuoteOptions(o){const b=o.mkt;return [{label:'Fair',mult:1.06,price:Math.round(b*1.06)},{label:'Marked up',mult:1.32,price:Math.round(b*1.32)},{label:'Premium',mult:1.72,price:Math.round(b*1.72)}];}
+function dmAcceptChance(p,rel,mult){const base=mult<=1.1?0.96:mult<=1.4?0.62:0.34;return clamp(base+(S.rep-50)/220+rel/260+(p?p.ease:0),0.05,0.97);}
+function dmMatchLot(o){return S.inv.find(l=>{if(l.sku!==o.sku||l.qty<o.qty)return false;if(o.demand==='exact')return (l.p||0)===o.p;return true;});}
+function spawnDM(){
+  if(chance(0.3)){const f=pick(DM_FLUFF); const th=S.dms.find(t=>t.handle===f.handle);
+    if(th){th.messages.push({from:'them',text:pick(f.lines),day:S.day});th.unread=true;th.lastDay=S.day;}
+    else S.dms.unshift({id:uid(),persona:null,handle:f.handle,name:f.handle,fluff:true,unread:true,lastDay:S.day,stage:'fluff',order:null,declines:0,messages:f.lines.map(l=>({from:'them',text:l,day:S.day}))});
+  } else {
+    const busy=S.dms.filter(t=>t.persona&&(t.stage==='request'||t.stage==='fill')).map(t=>t.persona);
+    const avail=DM_PERSONAS.filter(p=>!busy.includes(p.id));
+    if(!avail.length){if(S.dms.length>60)S.dms.length=60;return;}
+    const p=pick(avail); const order=makeDmOrder(p); const th=S.dms.find(t=>t.persona===p.id);
+    if(th){ // returning client — keep one continuous thread
+      th.messages.push({from:'them',text:pick(p.ret),day:S.day});
+      th.messages.push({from:'them',text:dmRequestLine(order),day:S.day});
+      th.order=order;th.stage='request';th.declines=0;th.unread=true;th.lastDay=S.day;
+    } else {
+      S.dms.unshift({id:uid(),persona:p.id,handle:p.handle,name:p.name,fluff:false,unread:true,lastDay:S.day,stage:'request',order,declines:0,
+        messages:[{from:'them',text:pick(p.greet),day:S.day},{from:'them',text:dmRequestLine(order),day:S.day}]});
+    }
+  }
+  if(S.dms.length>60)S.dms.length=60;}
+function dedupeDms(){
+  if(!Array.isArray(S.dms))return;
+  const pri=s=>({fill:3,request:2,fluff:1,closed:0}[s]||0);
+  const byHandle={};const order=[];
+  S.dms.forEach(t=>{const h=t.handle; if(!byHandle[h]){byHandle[h]=t;order.push(h);}
+    else{const k=byHandle[h]; k.messages=(k.messages||[]).concat(t.messages||[]);
+      if(pri(t.stage)>pri(k.stage)){k.stage=t.stage;k.order=t.order;k.declines=t.declines||0;}
+      k.unread=k.unread||t.unread; k.lastDay=Math.max(k.lastDay||0,t.lastDay||0);}});
+  order.forEach(h=>byHandle[h].messages.sort((a,b)=>(a.day||0)-(b.day||0)));
+  S.dms=order.map(h=>byHandle[h]);}
+function dmQuote(tid,oi){const t=S.dms.find(x=>x.id===tid);if(!t||t.stage!=='request')return;
+  const p=DM_PMAP[t.persona]; const opt=dmQuoteOptions(t.order)[oi]; t.order.agreed=opt.price; t.lastDay=S.day;
+  t.messages.push({from:'you',text:'I can do '+qty(t.order.qty)+' for '+money(opt.price)+'.',day:S.day});
+  const rel=S.dmRel[t.persona]||0;
+  if(chance(dmAcceptChance(p,rel,opt.mult))){t.messages.push({from:'them',text:pick(p.accept),day:S.day});t.stage='fill';notify(t.name+' agreed · '+money(opt.price),'clout');}
+  else{t.declines++;if(t.declines>=3){t.messages.push({from:'them',text:pick(p.decline),day:S.day});t.stage='closed';S.dmRel[t.persona]=clamp(rel-4,0,100);notify(t.name+' walked away','warn');}
+    else t.messages.push({from:'them',text:pick(p.haggle),day:S.day});}
+  render();}
+function dmFill(tid){const t=S.dms.find(x=>x.id===tid);if(!t||t.stage!=='fill')return;
+  const o=t.order; const lot=dmMatchLot(o);
+  if(!lot){flash('No matching '+(o.demand==='exact'?prodName(o.sku,o.p):SKUS[o.sku].label)+' in stock — buy it in the Bazaar first.');return;}
+  const cost=Math.round(o.qty*(lot.cost||0)); const filledName=prodName(o.sku,lot.p);
+  lot.qty-=o.qty; S.inv=S.inv.filter(l=>l.qty>0); S.cash+=o.agreed;
+  pnl('sell',t.name+' · '+filledName,o.agreed-cost,'DM sale · '+money(o.agreed));
+  S.rep=clamp(S.rep+1,0,100); S.dmRel[t.persona]=clamp((S.dmRel[t.persona]||0)+10,0,100); addFollowers(RI(2,12));
+  const p=DM_PMAP[t.persona]; t.lastDay=S.day;
+  t.messages.push({from:'you',text:'Done — '+qty(o.qty)+'× '+filledName+' on the way.',day:S.day});
+  t.messages.push({from:'them',text:pick(p.delivered),day:S.day});
+  t.stage='closed';
+  log('DM SALE · '+t.name+' · '+filledName+' · +'+money(o.agreed),'clout'); notify('DM sale · +'+money(o.agreed),'clout'); render();}
+function dmThreadView(t){const av=avatarFor(t.handle);
+  const bubbles=t.messages.map(m=>'<div class="bub '+(m.from==='you'?'me':'them')+'">'+m.text+'</div>').join('');
+  const rel=t.persona?(S.dmRel[t.persona]||0):0;
+  const sub=t.fluff?'no history — probably noise':(rel>=30?'regular client · rapport '+Math.round(rel):rel>0?'returning · rapport '+Math.round(rel):'new contact');
+  let action='';
+  if(t.fluff)action='<div class="dm-action"><div class="hint">No order here — just internet.</div><button class="btn ghost sm" data-dmdismiss="'+t.id+'">Mark read &amp; move on</button></div>';
+  else if(t.stage==='request'){const opts=dmQuoteOptions(t.order);const itm=SKUS[t.order.sku].label;
+    const want=t.order.demand==='exact'?'<b>'+itm+'</b> · must be '+prodName(t.order.sku,t.order.p):t.order.demand==='brand'?'<b>'+itm+'</b> · prefers '+t.order.brand+' (takes any brand)':'<b>'+itm+'</b> · any brand';
+    action='<div class="dm-action"><div class="dm-q-lab">They want: '+want+' · market '+money(t.order.mkt)+'</div><div class="dm-quotes">'+
+      opts.map((o,i)=>'<button class="btn sm dm-quote" data-dmquote="'+t.id+'" data-opt="'+i+'">'+o.label+' · '+money(o.price)+'</button>').join('')+'</div>'+(t.declines?'<div class="hint">They\'ve balked '+t.declines+'×. Push too hard and they walk.</div>':'')+'</div>';}
+  else if(t.stage==='fill'){const have=!!dmMatchLot(t.order);const itm=SKUS[t.order.sku].label;
+    const wantTxt=t.order.demand==='exact'?prodName(t.order.sku,t.order.p)+' ('+itm+')':itm;
+    const hint=t.order.demand==='exact'
+      ?'You need the exact <b>'+prodName(t.order.sku,t.order.p)+'</b>. Buy any <b>'+itm+'</b> in the Bazaar, then in <b>Inventory</b> re-stamp it to '+prodName(t.order.sku,t.order.p)+' to fill this.'
+      :'Buy a <b>'+itm+'</b> in the Bazaar (any brand), then come back here to fill.';
+    action='<div class="dm-action"><div class="dm-q-lab">Agreed '+money(t.order.agreed)+' for '+qty(t.order.qty)+'× '+wantTxt+'</div><button class="btn dm-fill" data-dmfill="'+t.id+'" '+(have?'':'disabled')+'>'+(have?'Fill order ▸':'Need matching stock')+'</button>'+(have?'':'<div class="hint">'+hint+'</div>')+'</div>';}
+  else action='<div class="dm-action"><div class="hint">Conversation closed.'+(t.persona?' They may message again.':'')+'</div></div>';
+  return '<button class="btn ghost sm" data-dmback style="margin-bottom:10px">◂ Inbox</button>'+
+    '<div class="dm-head"><span class="dm-av" style="background:'+av.c+'">'+av.ini+'</span><div style="flex:1"><div class="dm-name">'+t.handle+'</div><div class="dm-sub">'+sub+'</div></div></div>'+
+    '<div class="dm-thread">'+bubbles+'</div>'+action;}
+function viewInbox(){
+  if(!S.dms.length)return emptyBox('No messages yet','As your following grows, buyers — and weirdos — slide into your DMs. End a few days.');
+  if(S.dmOpen){const t=S.dms.find(x=>x.id===S.dmOpen);if(!t){S.dmOpen=null;return viewInbox();}return dmThreadView(t);}
+  const sorted=[...S.dms].sort((a,b)=>(b.unread-a.unread)||(b.lastDay-a.lastDay));
+  const rows=sorted.map(t=>{const av=avatarFor(t.handle);const last=t.messages[t.messages.length-1];
+    const tag=t.fluff?'<span class="dm-tag fluff">noise</span>':t.stage==='request'?'<span class="dm-tag req">wants to buy</span>':t.stage==='fill'?'<span class="dm-tag fill">ready to fill</span>':'<span class="dm-tag done">closed</span>';
+    return '<button class="dm-row'+(t.unread?' unread':'')+'" data-dmopen="'+t.id+'"><span class="dm-av" style="background:'+av.c+'">'+av.ini+'</span><div class="dm-main"><div class="dm-top"><span class="dm-name">'+t.handle+'</span>'+tag+'</div><div class="dm-snip">'+last.text.slice(0,64)+'</div></div>'+(t.unread?'<span class="dm-dot"></span>':'')+'</button>';}).join('');
+  return '<p class="lede">Buyers slide in with <b>special requests</b> — quote a price, let them haggle, and fill from your stock. Higher reputation (and rapport with repeat clients) makes them swallow bigger markups. Some DMs are just noise. New pings rise to the top.</p><div class="dm-list">'+rows+'</div>';}
 const APPS=[
   {id:'terminal',name:'BRASS Terminal',icon:'▤',theme:'theme-terminal'},
   {id:'bazaar',name:'Bazaar',icon:'🛒',theme:'theme-bazaar'},
   {id:'book',name:'The Book',icon:'🌐',theme:'theme-book'},
   {id:'face',name:'Friendly Face',icon:'👤',theme:'theme-face'},
+  {id:'inbox',name:'Inbox',icon:'✉',theme:'theme-face'},
   {id:'vault',name:'Vault',icon:'📈',theme:'theme-vault'},
 ];
 function appWindow(app,body){return '<div class="win '+app.theme+'"><div class="titlebar"><span class="dots"><i></i><i></i><i></i></span><span class="wtitle">'+app.name+'</span><button class="winx" data-closeapp aria-label="Close">×</button></div><div class="winbody">'+body+'</div></div>';}
-function appBody(id){return ({terminal:terminalBody,bazaar:viewMarket,book:viewBook,face:viewFace,vault:viewVault})[id]();}
+function appBody(id){return ({terminal:terminalBody,bazaar:viewMarket,book:viewBook,face:viewFace,inbox:viewInbox,vault:viewVault})[id]();}
 
 /* terminal */
 const TTABS=[{k:'contracts',label:'Solicitations'},{k:'jobs',label:'Open jobs'},{k:'inventory',label:'Inventory'},{k:'outfit',label:'Outfit'},{k:'ledger',label:'Ledger'}];
@@ -1489,13 +1675,13 @@ function lineRows(lines){return lines.map(li=>{const s=SKUS[li.sku];const r=line
   return '<div class="li-row"><div class="nm">'+s.label+(s.exp?' <span class="pill exp">export-ctrl</span>':'')+'<small>'+CODE[li.sku]+' · '+s.cat+(r?' · '+r:'')+'</small></div><div class="qt big">'+qty(li.need)+' <span style="font-size:11px;color:var(--muted)">'+s.unit+'</span></div></div>';}).join('');}
 function viewContracts(){
   if(!S.contracts.length)return emptyBox('No open solicitations','End the day to let the wire repopulate the feed.');
-  const counts={all:S.contracts.length,personal:0,indie:0,government:0,whale:0};
-  S.contracts.forEach(c=>counts[c.tier]++);
-  let list=S.contracts.filter(c=>S.solFilter==='all'||c.tier===S.solFilter);
+  const counts={all:S.contracts.length,1:0,2:0,3:0,4:0,5:0};
+  S.contracts.forEach(c=>{counts[c.tier]=(counts[c.tier]||0)+1;});
+  let list=S.contracts.filter(c=>S.solFilter==='all'||String(c.tier)===S.solFilter);
   if(S.solSort==='value')list=[...list].sort((a,b)=>b.ceiling-a.ceiling);
   else if(S.solSort==='deadline')list=[...list].sort((a,b)=>(a.deadline-S.day)-(b.deadline-S.day));
-  const chipDef=[['all','All'],['personal','Individual'],['indie','Small Group'],['government','Police'],['whale','Arsenal']];
-  const chips=chipDef.map(([k,lab])=>'<button class="sol-chip'+(S.solFilter===k?' on':'')+'" data-solfilter="'+k+'">'+lab+' <span>'+counts[k]+'</span></button>').join('');
+  const chipDef=[['all','All'],['1','Streets'],['2','Organized'],['3','Regional'],['4','Military'],['5','Strategic']];
+  const chips=chipDef.filter(([k])=>k==='all'||counts[k]).map(([k,lab])=>'<button class="sol-chip'+(S.solFilter===k?' on':'')+'" data-solfilter="'+k+'">'+lab+' <span>'+(counts[k]||0)+'</span></button>').join('');
   const sortDef=[['new','Newest'],['value','$ high→low'],['deadline','Deadline']];
   const sort='<span class="sol-sort-lab">sort</span>'+sortDef.map(([k,lab])=>'<button class="sol-sortbtn'+(S.solSort===k?' on':'')+'" data-solsort="'+k+'">'+lab+'</button>').join('');
   const cards=list.map(c=>{
@@ -1535,6 +1721,12 @@ function viewInventory(){
         const gap=Math.max(0,(arr[tp].mod||1)-curMod);const c=Math.round(l.qty*price(l.sku)*(0.05+gap*0.6));
         matches.push('<button class="btn sm" data-relabelto="'+l.id+'" data-p="'+tp+'">⤷ Stamp to fit '+j.buyer+' · '+prodName(l.sku,tp)+' · +'+cmoney(c)+'</button>');
       }));
+      // DM buyers who agreed to an exact product also get a one-tap stamp
+      S.dms.forEach(t=>{const o=t.order;if(!o||t.stage!=='fill'||o.demand!=='exact'||o.sku!==l.sku)return;
+        if(o.p==null||o.p===(l.p||0)||seen[o.p])return; seen[o.p]=1;
+        const gap=Math.max(0,(arr[o.p].mod||1)-curMod);const c=Math.round(l.qty*price(l.sku)*(0.05+gap*0.6));
+        matches.push('<button class="btn sm" data-relabelto="'+l.id+'" data-p="'+o.p+'">⤷ Stamp to fit '+t.name+' (DM) · '+prodName(l.sku,o.p)+' · +'+cmoney(c)+'</button>');
+      });
       const matchUI=matches.length?'<div class="match-row">'+matches.slice(0,3).join('')+'</div>':'';
       const opts=arr.map((pr,i)=>{if(i===(l.p||0))return '';const gap=Math.max(0,(pr.mod||1)-curMod);const c=Math.round(l.qty*price(l.sku)*(0.05+gap*0.6));return '<option value="'+i+'">'+pr.b+' '+pr.n+' · +'+cmoney(c)+'</option>';}).join('');
       relabelUI=matchUI+'<div class="field" style="margin-top:6px"><select id="rb-'+l.id+'" class="rb-sel">'+opts+'</select><button class="btn ghost sm" data-relabel="'+l.id+'">Re-stamp to label</button></div>';}
@@ -1577,13 +1769,22 @@ function viewLedger(){
     '<div class="line"><span class="l">Operation scale (tier '+(S.maxTier||1)+')</span><span class="r">'+money(1500*Math.max(0,(S.maxTier||1)-1))+'</span></div>'+
     '<div class="line" style="margin-top:4px"><span class="l">Due every 7 days</span><span class="r big">'+money(nut)+'</span></div>'+
     '<div class="hint">Charged automatically. Bigger outfits cost more to run — keep deals flowing or it eats you.</div></div></div>';
+  const hostiles=aliveUnlocked().filter(f=>fst(f.id).standing<8);
+  const decayRate=1+Math.floor(S.heat/22)+heatDecayBonus();
+  const heatCard='<div class="card"><div class="hd"><div class="ttl">Heat &amp; exposure</div><span class="pill '+(S.heat>66?'warn':'')+'">'+Math.round(S.heat)+' / 100</span></div><div class="bd">'+
+    '<div class="line"><span class="l">Cooling per day</span><span class="r" style="color:var(--up)">−'+decayRate+(heatDecayBonus()?' (incl. Shell)':'')+'</span></div>'+
+    '<div class="line"><span class="l">Each delivery cools</span><span class="r">−2</span></div>'+
+    '<div class="line"><span class="l">Hostile factions leaking your name</span><span class="r" style="color:'+(hostiles.length?'var(--down)':'var(--muted)')+'">'+(hostiles.length?hostiles.length+' · ~+'+(hostiles.length*0.6).toFixed(1)+'/day':'none')+'</span></div>'+
+    (hostiles.length?'<div class="hint" style="color:var(--down)">'+hostiles.map(f=>f.name).join(', ')+' — deliver to them to repair standing and stop the leaks at the source.</div>':'')+
+    (S.heat>=4?'<button class="btn" data-fixer style="margin-top:6px">Pay a fixer · bury '+fixerCut()+' heat · '+money(fixerCost())+'</button>':'<div class="hint" style="margin-top:6px">Heat is low — nothing to bury right now.</div>')+
+    '<div class="hint" style="margin-top:6px">At 100 heat your license is pulled and the run ends. The <b>Compliance Shell</b> in Outfit permanently raises daily cooling.</div></div></div>';
   return '<div class="two"><div class="card"><div class="hd"><div class="ttl">Credit line</div></div><div class="bd">'+
     '<div class="line"><span class="l">Limit (scales with reputation)</span><span class="r">'+money(creditLimit())+'</span></div>'+
     '<div class="line"><span class="l">Drawn</span><span class="r">'+money(S.debt)+'</span></div>'+
     '<div class="line"><span class="l">Available to draw</span><span class="r big" style="color:var(--up)">'+money(room)+'</span></div>'+
     '<div class="field"><input type="number" id="draw" placeholder="draw amount" min="1" max="'+room+'"><button class="btn" data-draw>Draw</button></div>'+
     '<div class="field"><input type="number" id="repay" placeholder="repay amount" min="1" max="'+Math.min(S.debt,S.cash)+'"><button class="btn ghost" data-repay>Repay</button></div></div></div>'+
-    ohCard+
+    heatCard+ohCard+
     '<div class="card"><div class="hd"><div class="ttl">Activity log</div></div><div class="bd"><div class="logbox">'+(S.log.length?S.log.map(e=>'<div class="logline '+e.kind+'"><span class="d">D'+e.d+'</span>'+e.msg+'</div>').join(''):'<div class="logline">No activity yet.</div>')+'</div></div></div></div>';}
 
 /* bazaar */
@@ -1747,7 +1948,7 @@ function viewBook(){
     return '<div class="mat '+state+'"><div class="mat-t">'+romN(m.tier)+'</div><div class="mat-b"><div class="mat-l">'+m.label+(open?' <span class="mat-on">● online</span>':m.locked?' <span class="mat-soon">next slice</span>':' <span class="mat-lk">🔒</span>')+'</div><div class="mat-i">'+m.items+'</div></div></div>';
   }).join('')+'</div></div>';
   const aliveN=FACTIONS.filter(f=>fst(f.id).alive).length;
-  const head='<div class="bk-head"><h3>The Book</h3><p>Your contacts are a political map. Arming a faction raises your standing with it and its bloc, erodes its rivals\' <b>power</b>, and — if you keep feeding one side — <b>wipes the other off the board</b>. Each war you win ascends the victor and unlocks heavier materiel. <b>'+aliveN+'</b> factions standing · highest tier reached: <b>'+romN(S.maxTier)+'</b>.</p></div>';
+  const head='<div class="bk-head"><h3>The Book</h3><p>One war, two paymasters: the <b style="color:#e08577">Vantor Group</b> (a country-sized PMC) funds militias, cartels and insurgents, while the <b style="color:#8fb6e0">Federal Government</b> arms police, the Guard and the army. Pick a side — arming a proxy raises your standing with its whole bloc and erodes the rival across the line. Keep feeding one side and you <b>wipe the other off the board</b>, ascend the victor, and unlock heavier materiel. <b>'+aliveN+'</b> factions standing · highest tier reached: <b>'+romN(S.maxTier)+'</b>.</p></div>';
   return head+frontHTML+tiersHTML+mat;}
 function romN(n){return ['','I','II','III','IV','V'][n]||n;}
 
@@ -1788,6 +1989,7 @@ function render(){
     let badge='';
     if(a.id==='terminal'){const due=S.jobs.filter(j=>j.deadline-S.day<=1).length;if(due)badge='<span class="badge2">'+due+'</span>';else if(S.contracts.length)badge='<span class="badge2" style="background:#caa227;color:#181410">'+S.contracts.length+'</span>';}
     if(a.id==='face'&&S.followers>0)badge='<span class="badge2" style="background:#2b6fe0">'+kfmt(S.followers)+'</span>';
+    if(a.id==='inbox'){const u=dmUnread();if(u)badge='<span class="badge2">'+u+'</span>';}
     return '<button class="dicon '+(S.app===a.id?'on':'')+'" data-app="'+a.id+'"><span class="glyph g-'+a.id+'">'+a.icon+badge+'</span><span class="lbl">'+a.name+'</span></button>';
   }).join('')+'<button class="dicon" data-help><span class="glyph g-help">?</span><span class="lbl">Field Manual</span></button>';
   const pct=clamp(S.maxTier/5,0,1)*100;
@@ -1843,7 +2045,7 @@ function showEnd(){const w=S.over.win;
     '<div class="line"><span class="l">Operating days</span><span class="r">'+S.day+'</span></div>'+
     '<div class="line"><span class="l">Final valuation</span><span class="r big">'+money(netWorth())+'</span></div>'+
     '<div class="line"><span class="l">Reputation</span><span class="r">'+Math.round(S.rep)+'</span></div>'+
-    '<div class="line"><span class="l">Followers</span><span class="r">'+qty(S.followers)+'</span></div></div><div class="mf"><button class="btn ghost" data-restart>New brokerage</button><button class="btn" data-close>Start playing ▸</button></div></div></div>';}
+    '<div class="line"><span class="l">Followers</span><span class="r">'+qty(S.followers)+'</span></div></div><div class="mf">'+(w?'<button class="btn ghost" data-newrun>New brokerage</button><button class="btn" data-keepplaying>Keep playing ▸</button>':'<button class="btn" data-newrun>New brokerage</button>')+'</div></div></div>';}
 
 /* ---------------- events ---------------- */
 document.addEventListener('click',e=>{
@@ -1857,6 +2059,14 @@ document.addEventListener('click',e=>{
   if(t.hasAttribute('data-help')){showManual();return;}
   if(t.hasAttribute('data-close')||t.hasAttribute('data-close-scrim')){document.getElementById('modalRoot').innerHTML='';return;}
   if(t.hasAttribute('data-dev')){devUnlock();return;}
+  if(d.dmopen){S.dmOpen=+d.dmopen;const th=S.dms.find(x=>x.id===+d.dmopen);if(th)th.unread=false;render();return;}
+  if(t.hasAttribute('data-dmback')){S.dmOpen=null;render();return;}
+  if(d.dmquote){dmQuote(+d.dmquote,+d.opt);return;}
+  if(d.dmfill){dmFill(+d.dmfill);return;}
+  if(d.dmdismiss){const th=S.dms.find(x=>x.id===+d.dmdismiss);if(th)th.unread=false;S.dmOpen=null;render();return;}
+  if(t.hasAttribute('data-keepplaying')){S.over=null;S.winAck=true;document.getElementById('modalRoot').innerHTML='';render();return;}
+  if(t.hasAttribute('data-newrun')){wipeSave();location.reload();return;}
+  if(t.hasAttribute('data-fixer')){payFixer();return;}
   if(t.hasAttribute('data-savemenu')){showSaveMenu();return;}
   if(t.hasAttribute('data-savenow')){manualSave();return;}
   if(t.hasAttribute('data-loadsave')){if(loadGame()){document.getElementById('modalRoot').innerHTML='';render();notify('Save loaded · Day '+S.day,'clout');}else flash('No save found.');return;}
@@ -1900,7 +2110,12 @@ document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='cmp-ad'){S
 const SAVE_KEY='brass_save_v1';let _storageOK=true;
 function autosave(){if(!_storageOK)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({v:1,t:Date.now(),S}));}catch(e){_storageOK=false;}}
 function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){_storageOK=false;return false;}}
-function applySave(saved){if(!saved||typeof saved!=='object')return false;Object.keys(saved).forEach(k=>{S[k]=saved[k];});return true;}
+function applySave(saved){if(!saved||typeof saved!=='object')return false;Object.keys(saved).forEach(k=>{S[k]=saved[k];});
+  if(!S.factions||typeof S.factions!=='object')S.factions={};
+  FACTIONS.forEach(f=>{if(!S.factions[f.id])S.factions[f.id]={standing:f.tier===1?32:14,power:60,alive:true};});
+  if(!Array.isArray(S.dms))S.dms=[]; if(!S.dmRel||typeof S.dmRel!=='object')S.dmRel={};
+  dedupeDms();
+  return true;}
 function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;const d=JSON.parse(raw);return applySave(d.S||d);}catch(e){return false;}}
 function wipeSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function manualSave(){autosave();if(_storageOK)notify('Game saved','clout');else flash('This browser blocks storage — use Export instead.');}
@@ -1920,6 +2135,7 @@ const _loaded=loadGame();
 if(!_loaded){
   refreshVendors(6); refreshContracts();
   for(let i=0;i<5;i++)ambientPost();
+  spawnDM();
   S.netHist.push({day:1,nw:netWorth()});
   log('Brokerage opened. '+money(S.cash)+' working capital, '+money(creditLimit())+' credit line.','');
 }
